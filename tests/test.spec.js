@@ -144,7 +144,7 @@ describe('model ', function(){
             model.erase('alejandro', '22/10/2020 12:00');
             expect(model.clients.alejandro).to.be.deep.equal([]);
         })
-        xit('it must receive a name and if receive a status must erase all the appointments whith that status', function(){
+        it('it must receive a name and if receive a status must erase all the appointments whith that status', function(){
             model.erase('javier', 'attended');
             expect(model.clients.javier).to.be.deep.equal([ { date: '22/10/2020 14:00', status: 'pending' } ]);
             model.erase('alejandro', 'cancelled');
@@ -175,7 +175,7 @@ describe('model ', function(){
                 { date: '22/10/2020 16:00', status: 'attended' }]
             );
         })
-        xit('if a status was passed, should only return the appointments with that status', function(){
+        it('if a status was passed, should only return the appointments with that status', function(){
             let appointmentsPending = model.getAppointments('javier', 'pending');
             let appointmentsAttended = model.getAppointments('javier', 'attended');
             let appointmentsExpired = model.getAppointments('alejandro', 'expired');
@@ -212,7 +212,7 @@ describe('server', () => {
     });
 
     describe('GET /api', function(){
-        xit('responds with the object clients', () => {
+        it('responds with the object clients', () => {
             return agent.get('/api')
             .expect(200)
             .then((res) => {
@@ -226,7 +226,7 @@ describe('server', () => {
     })
 
     describe('POST /api/Appointments', () => {
-        xit('responds with a status 400 (bad request) and a string message, if the client was not passed', ()=>{
+        it('responds with a status 400 (bad request) and a string message, if the client was not passed', ()=>{
             return agent.post('/api/Appointments')
             .send({Appointment: {date:'22/10/2020 11:00'}})
             .expect(400)
@@ -234,7 +234,7 @@ describe('server', () => {
                 expect(res.text).to.be.equal('the body must have a client property')
             });
         })
-        xit('responds with a status 400 (bad request) and a string message, if the client was not a string', ()=>{
+        it('responds with a status 400 (bad request) and a string message, if the client was not a string', ()=>{
             return agent.post('/api/Appointments')
             .send({client: 5, appointment: {date:'22/10/2020 11:00'}})
             .expect(400)
@@ -242,7 +242,7 @@ describe('server', () => {
                 expect(res.text).to.be.equal('client must be a string')
             });
         })
-        xit('add a appointment to a client', () => {
+        it('add a appointment to a client', () => {
             return agent.post('/api/Appointments')
             .send({client: 'alejandro', appointment: {date:'22/10/2020 11:00'}})
             .expect(200)
@@ -250,7 +250,7 @@ describe('server', () => {
                 expect(model.clients.alejandro).to.be.deep.equal([ { date: '22/10/2020 11:00', status: 'pending' } ])
             });
         });
-        xit('responds the appointment after the addition', () => {
+        it('responds the appointment after the addition', () => {
             return agent.post('/api/Appointments')
             .send({client: 'alejandro', appointment: {date:'22/10/2020 12:00'}})
             .expect(200)
@@ -261,14 +261,14 @@ describe('server', () => {
     })
 
     describe('GET /api/Appointments/:name?date=xxx&option=xxx', () => {
-        xit('responds with a status 400 (bad request) and a string message, if the client does not exist', ()=>{
+        it('responds with a status 400 (bad request) and a string message, if the client does not exist', ()=>{
             return agent.get('/api/Appointments/pepe?date=22/10/2020%2014:00&option=attend')
             .expect(400)
             .expect((res) => {
                 expect(res.text).to.be.equal('the client does not exist')
             })
         })
-        xit('responds with a status 400 (bad request) and a string message, if the client does not have a appointment for this date', ()=>{
+        it('responds with a status 400 (bad request) and a string message, if the client does not have a appointment for this date', ()=>{
             return agent.get('/api/Appointments/javier?date=23/10/2020%2014:00&option=attend')
             .expect(400)
             .expect((res) => {

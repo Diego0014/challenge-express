@@ -4,7 +4,7 @@
   "description": "just for practice",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./tests/*.spec.js -w"
+    "test": "mocha ./tests/*.spec.js"
   },
   "author": "JavierBalonga",
   "license": "ISC",

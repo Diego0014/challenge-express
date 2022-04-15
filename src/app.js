@@ -53,10 +53,7 @@ let model = {
     );
   },
   getAppointments: (name, status) => {
-    if (name && status) {
-      let filterStatus = model.clients[name].filter((s) => s.status === status);
-      return filterStatus;
-    }
+    if (name && status) return model.clients[name].filter((s) => s.status === status);
     if (name && !status && model.clients[name]) return model.clients[name];
     return model.clients;
   },
@@ -78,26 +75,61 @@ server.post("/api/Appointments", (req, res) => {
   } else if (typeof client !== "string") {
     return res.status(400).send("client must be a string");
   } else {
-    
-    return res
-      .status(200)
-      .json(model.addAppointment(client, appointment));
+    return res.status(200).json(model.addAppointment(client, appointment));
   }
 });
 
 server.get("/api/Appointments/:name", (req, res) => {
   const { name } = req.params;
-  const { date, options } = req.query;
+  const { date, option } = req.query;
 
+  if (!model.getClients().includes(name)) return res.status(400).send("the client does not exist");
+  const aux = model.getAppointments(name).filter((e) => e.date === date);
+  
+  if (aux.length === 0) {
+    return res
+      .status(400)
+      .send("the client does not have a appointment for that date");
+  }
+  if (!["attend", "expire", "cancel"].includes(option)) {
+    return res.status(400).send("the option must be attend, expire or cancel");
+  }
+  switch (option) {
+    case "attend":{
+      model.attend(name, date);
+      return res.status(200).send(model.getAppointments(name))
+    }
+    case "expire":{
+      model.expire(name, date);
+      return res.status(200).send(model.getAppointments(name))
+    }
+    case "cancel":{
+      model.cancel(name, date);
+      return res.status(200).send(model.getAppointments(name))
+    }
+  }
+  
+});
+
+server.get("/api/Appointments/:name/erase", (req, res) => {
+  const { name } = req.params;
+  const { date } = req.query;
   if (!model.getClients().includes(name)) {
     return res.status(400).send("the client does not exist");
   }
-  for (const key in model.clients[name]) {
-    if (key.date !== date)
-      return res
-        .status(400)
-        .send("the client does not have a appointment for that date");
+  if (name && date) {
+    return res.status(200).json(model.erase(name, date));
   }
+});
+
+server.get("/api/Appointments/getAppointments/:name", (req, res) => {
+  const { name } = req.params;
+  const { status } = req.query;
+  res.status(200).send(model.getAppointments(name, status));
+});
+
+server.get("/api/Appointments/clients", (req, res) => {
+  return res.status(200).send(model.getClients());
 });
 
 server.listen(3000);

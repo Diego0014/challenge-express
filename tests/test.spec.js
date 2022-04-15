@@ -306,7 +306,7 @@ describe('server', () => {
                 .to.be.deep.equal({ date: '22/10/2020 14:00', status: 'cancelled' })
             })
         })
-        xit('respods the modified appointment', ()=>{
+        it('respods the modified appointment', ()=>{
             return agent.get('/api/Appointments/javier?date=22/10/2020%2014:00&option=cancel')
             .expect(200)
             .expect((res) => {
@@ -363,7 +363,7 @@ describe('server', () => {
     })
 
     describe('GET /api/Appointments/clients', function(){
-        xit('responds with an array of the list of clients', () => {
+        it('responds with an array of the list of clients', () => {
             return agent.get('/api/Appointments/clients')
             .expect(200)
             .then((res) => {

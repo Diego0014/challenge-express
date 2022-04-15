@@ -59,7 +59,7 @@ let model = {
   },
   getClients: () => {
     let arr = [];
-    for (const key in model.clients) arr.push(key);
+    for (let key in model.clients) arr.push(key);
     return arr;
   },
 };
@@ -67,6 +67,8 @@ let model = {
 server.get("/api", (req, res) => {
   return res.json(model.clients);
 });
+
+
 
 server.post("/api/Appointments", (req, res) => {
   const { client, appointment } = req.body;
@@ -77,6 +79,10 @@ server.post("/api/Appointments", (req, res) => {
   } else {
     return res.status(200).json(model.addAppointment(client, appointment));
   }
+});
+
+server.get("/api/Appointments/clients", (req, res) => {
+  return res.status(200).send(model.getClients());
 });
 
 server.get("/api/Appointments/:name", (req, res) => {
@@ -97,15 +103,15 @@ server.get("/api/Appointments/:name", (req, res) => {
   switch (option) {
     case "attend":{
       model.attend(name, date);
-      return res.status(200).send(model.getAppointments(name))
+      return res.status(200).send(model.getAppointments(name).find(e => e.date === date))
     }
     case "expire":{
       model.expire(name, date);
-      return res.status(200).send(model.getAppointments(name))
+      return res.status(200).send(model.getAppointments(name).find(e => e.date === date))
     }
     case "cancel":{
       model.cancel(name, date);
-      return res.status(200).send(model.getAppointments(name))
+      return res.status(200).send(model.getAppointments(name).find(e => e.date === date))
     }
   }
   
@@ -122,15 +128,13 @@ server.get("/api/Appointments/:name/erase", (req, res) => {
   }
 });
 
+
 server.get("/api/Appointments/getAppointments/:name", (req, res) => {
   const { name } = req.params;
   const { status } = req.query;
   res.status(200).send(model.getAppointments(name, status));
 });
 
-server.get("/api/Appointments/clients", (req, res) => {
-  return res.status(200).send(model.getClients());
-});
 
 server.listen(3000);
 module.exports = { model, server };
